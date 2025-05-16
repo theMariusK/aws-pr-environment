@@ -30,7 +30,7 @@ jobs:
       - name: Start step functions
         run: |
           aws stepfunctions start-execution \
-            --state-machine-arn "arn:aws:iam::313196411736:role/stepfunctions-execution-role-lry9xkp9" \
+            --state-machine-arn "arn:aws:states:eu-north-1:313196411736:stateMachine:PR-env-orchestrator-lry9xkp9" \
             --input "{\"pr_number\": \"${{ github.event.pull_request.number }}\", \"commit_id\": \"${{ github.sha }}\"}" \
             --name "PR-${{ github.event.pull_request.number }}-${{ github.sha }}"
 
