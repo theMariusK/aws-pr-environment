@@ -1,0 +1,19 @@
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::313196411736:role/github-actions
+          role-session-name: github-actions-session
+          aws-region: eu-north-1
+
+      - name: Run AWS STS
+        run: aws sts get-caller-identity
