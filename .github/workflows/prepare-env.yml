@@ -8,9 +8,31 @@ on:
       - reopened
 
 jobs:
-  pr_msg:
+  orchestrate_deployment:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
-      - name: Print message
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: github-actions-session
+          aws-region: eu-north-1
+
+      - name: Verify connection
+        run: aws sts get-caller-identity
+
+      - name: Start step functions
         run: |
-          echo "Testing message - ${{ github.ref }}"
+          aws stepfunctions start-execution \
+            --state-machine-arn "arn:aws:states:eu-north-1:313196411736:stateMachine:PR-env-orchestrator-lry9xkp9" \
+            --input "{\"pr_number\": \"${{ github.event.pull_request.number }}\", \"commit_id\": \"${{ github.sha }}\"}" \
+            --name "PR-${{ github.event.pull_request.number }}-${{ github.sha }}"
+
+        env:
+          AWS_REGION: eu-north-1
