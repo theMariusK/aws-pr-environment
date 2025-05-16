@@ -1,0 +1,16 @@
+name: PR Environment preparation
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  pr_msg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print message
+        run: |
+          echo "Testing message - ${{ github.ref }}"
